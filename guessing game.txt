@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <string.h>
+
+char w[50], w1[50], gword[50];
+int count = 0, rem, i;
+char display[50];
+int n = 3;
+char guessedLetters[26];
+
+void decrypt(char* w, const char* w1) 
+{
+    int len = strlen(w1);
+    for (i = 0; i < len; i++) 
+    {
+        w[i] = w1[i] - 1; //just decrypting to get actual word
+    }
+}
+
+void word() 
+{
+    printf("\nEnter the word that is to be guessed: ");
+    scanf("%s", w1);
+    decrypt(w, w1);
+    int len = strlen(w);
+    count = len;
+    rem = count - 1;
+    for (i = 0; i < len; i++) 
+    {
+        display[i] = '_';
+    }
+}
+
+int isLetterGuessed(char letter) //checks if letter has already been guessed
+{
+    for (i = 0; i < count - rem; i++) 
+    {
+        if (guessedLetters[i] == letter) 
+        {
+            return 1;
+        }
+    }
+    return 0; // The letter has not been guessed yet
+}
+
+void check(char guess) 
+{
+    int found = 0;
+
+    if (!isLetterGuessed(guess)) 
+    { // Check if the letter has already been guessed
+        guessedLetters[count - rem - 1] = guess; // Store the guessed letter
+        for (i = 0; i < count; i++) 
+        {
+            if (w[i] == guess) 
+            {
+                found = 1;
+                // Update the display with the correct guess
+                display[i] = guess;
+            }
+        }
+    } 
+    else 
+    {
+        printf("\nYou've already guessed '%c'. Try a different letter.\n", guess);
+    }
+
+    printf("\nYour word is: ");
+    for (i = 0; i < count; i++) 
+    {
+        printf("%c ", display[i]); // Display the current status of the word
+    }
+
+    if (!found) 
+    {
+        printf("\nIncorrect guess!");
+        rem--;
+    }
+}
+void guess() 
+{
+    char ch;
+    for (i = 0; i < rem; i++) 
+    {
+        printf("\nEnter the letter: ");
+        scanf(" %c", &ch); // Use a space before %c to consume any newline characters
+        check(ch);
+    }
+    rem--;
+}
+void play() 
+{
+    printf("\nYour word is: ");
+    for (i = 0; i < count; i++) 
+    {
+        printf("%c ", display[i]);
+    }
+
+    if (rem > 0) 
+    {
+        guess();
+    } 
+    else 
+    {
+        printf("\nNo more tries left!");
+    }
+
+    // Check if the player has guessed the word
+    int wordGuessed = 1;
+    for (i = 0; i < count; i++) 
+    {
+        if (display[i] == '_') 
+        {
+            wordGuessed = 0;
+            break;
+        }
+    }
+    if (wordGuessed) 
+    {
+        printf("\nCongratulations! You guessed the word!\n");
+    }
+}
+
+void guessword() 
+{
+    if (n > 0) 
+    {
+        printf("\nGuess the word if you know it! ");
+        scanf("%s", gword);
+        n--;
+        if (strcmp(gword, w) == 0) 
+        {
+            printf("\nYay! You guessed the word!!");
+        } 
+        else 
+        {
+            printf("\nTry Again");
+        }
+    } 
+    else 
+    {
+        printf("\nNo more tries! You Lose!");
+        printf("\nThe correct word is: %s",w);
+    }
+}
+
+int main() 
+{
+    int choice;
+
+    printf("\nGUESSING GAME");
+    printf("\nMENU\n");
+    printf("\n1.Word to be guessed\n2.Guess a letter\n3.Guess the word\n4.Exit\n");
+
+    do 
+    {
+        printf("\n\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) 
+        {
+            case 1:
+                word();
+                break;
+            case 2:
+                play();
+                break;
+            case 3:
+                guessword();
+                break;
+            case 4:
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (1);
+
+    return 0;
+}
